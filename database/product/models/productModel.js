@@ -9,7 +9,7 @@ const productModel = sequelize.define(
 			allowNull: false,
 		},
 		description: {
-			type: DataTypes.STRING,
+			type: DataTypes.STRING(300),
 			allowNull: false,
 		},
 		type: {
@@ -17,7 +17,7 @@ const productModel = sequelize.define(
 			allowNull: false,
 		},
 		price: {
-			type: DataTypes.STRING,
+			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
 		imagen: {
