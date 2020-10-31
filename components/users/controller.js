@@ -11,6 +11,7 @@ const createUser = (data) => {
 			userModel
 				.create(data)
 				.then((user) => {
+					delete user.dataValues.password;
 					res(user);
 				})
 				.catch((error) => {
@@ -30,6 +31,7 @@ const loginUser = (recibed_password, recibed_email) => {
 		} else {
 			let user = await userModel.findOne({
 				where: { [Op.and]: [{ email: recibed_email }, { password: recibed_password }] },
+				raw: true,
 			});
 			if (user) {
 				delete user.password;

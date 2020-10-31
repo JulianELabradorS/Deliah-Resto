@@ -6,7 +6,7 @@ const orderModel = require('../../database/order/models/orderModel');
 // create request
 const createRequest = (data) => {
 	return new Promise((res, rejc) => {
-		if (data.products && Array.isArray(data.products)) {
+		if (data.products && Array.isArray(data.products) && data.pay_method) {
 			const { products, ...request } = data;
 			requestModel
 				.create(request)
@@ -22,7 +22,7 @@ const createRequest = (data) => {
 						.catch((error) => {
 							requestModel.destroy({ where: { id: request.id } });
 							if (error.name === 'SequelizeForeignKeyConstraintError') {
-								rejc({ status: 400, message: 'No se pudo crear la orden, el producto no existe.' });
+								rejc({ status: 404, message: 'No se pudo crear la orden, el producto no existe.' });
 							} else {
 								rejc({ status: 500, message: 'UPS!! tenemos problemas intenta de nuevo mas tarde' });
 							}
@@ -30,7 +30,7 @@ const createRequest = (data) => {
 				})
 				.catch((error) => {
 					if (error.name === 'SequelizeForeignKeyConstraintError') {
-						rejc({ status: 400, message: 'No se pudo crear la orden, el usuario no existe.' });
+						rejc({ status: 404, message: 'No se pudo crear la orden, el usuario no existe.' });
 					} else {
 						rejc({ status: 500, message: 'UPS!! tenemos problemas intenta de nuevo mas tarde' });
 					}
@@ -65,7 +65,7 @@ const findById = (reqid) => {
 				})
 				.then((response) => {
 					if (response.length === 0) {
-						rejc({ status: 400, message: `No existe un producto con id ${reqid}` });
+						rejc({ status: 404, message: `No existe la orden con id ${reqid}` });
 					} else {
 						const data = { ...response[0] };
 						data.products = [];
@@ -90,7 +90,7 @@ const updateStateById = (id, data) => {
 				.update({ state: data.state }, { where: { id: id } })
 				.then((response) => {
 					if (response[0] === 1) {
-						res('Estado de el pedido actualizado');
+						res({ message: 'Estado de la orden actualizado' });
 					} else {
 						rejc({ status: 400, message: 'No se Pudo actualizar tu pedido.' });
 					}
@@ -103,8 +103,29 @@ const updateStateById = (id, data) => {
 		}
 	});
 };
+const deleteById = (id) => {
+	return new Promise((res, rejc) => {
+		if (id) {
+			requestModel
+				.destroy({ where: { id: id } })
+				.then((response) => {
+					if (response[0] === 1) {
+						res('Orden eliminada');
+					} else {
+						rejc({ status: 404, message: `No se encontro la orden con id ${id}` });
+					}
+				})
+				.catch((error) => {
+					rejc({ status: 500, message: 'Intente de nuevo mas tarde.' });
+				});
+		} else {
+			rejc({ status: 400, message: 'No se envio id' });
+		}
+	});
+};
 module.exports = {
 	findById,
 	createRequest,
 	updateStateById,
+	deleteById,
 };

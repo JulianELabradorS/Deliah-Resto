@@ -1,6 +1,7 @@
 const express = require('express');
+const requestModel = require('../../database/request/models/requestModel');
 //CONTROLLER
-const { findById, createRequest, updateStateById } = require('./controller');
+const { findById, createRequest, updateStateById, deleteById } = require('./controller');
 //MIDDLEWARES
 const autorization = require('../../middlewares/autorization');
 const autentication = require('../../middlewares/autentication');
@@ -20,6 +21,16 @@ router.post('/create', autentication, (req, res) => {
 		})
 		.catch((error) => {
 			res.status(error.status).json({ message: error.message });
+		});
+});
+router.get('/all', autentication, autorization, (req, res) => {
+	requestModel
+		.findAll()
+		.then((response) => {
+			res.status(200).json({ orders: response });
+		})
+		.catch((error) => {
+			res.status(500).json({ message: 'Error en servidor' });
 		});
 });
 
@@ -49,11 +60,12 @@ router.patch('/update/:id', autentication, autorization, (req, res) => {
 });
 router.delete('/delete/:id', autentication, autorization, (req, res) => {
 	let id = req.params.id;
-	pedidos.forEach((pedido, index) => {
-		if (pedido.id === parseInt(id)) {
-			pedidos.splice(index, 1);
-		}
-	});
-	res.status(200).json(pedidos);
+	deleteById(id)
+		.then((response) => {
+			res.status(200).json(response);
+		})
+		.catch((error) => {
+			res.status(error.status).json({ message: error.message });
+		});
 });
 module.exports = router;

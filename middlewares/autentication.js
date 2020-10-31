@@ -12,7 +12,7 @@ const autentication = (req, res, next) => {
 			next();
 		});
 	} else {
-		res.status(401).json('por favor ingresa con tu usuario y contraseña');
+		res.status(401).json({ message: 'por favor ingresa con tu usuario y contraseña' });
 	}
 };
 

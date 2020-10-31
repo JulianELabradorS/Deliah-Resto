@@ -24,13 +24,13 @@ const updateProductById = (id, data) => {
 			.update(data, { where: { id: id } })
 			.then((response) => {
 				if (response[0] === 1) {
-					res('el producto fue actualizado');
+					res({ message: 'El producto fue actualizado' });
 				} else {
 					rejc({ status: 400, message: 'No se Pudo actualizar el producto.' });
 				}
 			})
 			.catch((error) => {
-				rejc({ status: 500, message: 'intente de nuevo mas tarde.' });
+				rejc({ status: 500, message: 'Intente de nuevo mas tarde.' });
 			});
 	});
 };
@@ -41,7 +41,7 @@ const deleteProduct = (id) => {
 			.destroy({ where: { id: id } })
 			.then((response) => {
 				if (response === 1) {
-					res('producto eliminado');
+					res({ message: 'producto eliminado' });
 				} else {
 					rejc({ status: 400, message: 'el producto no existe, no puede ser eliminado' });
 				}

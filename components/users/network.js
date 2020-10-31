@@ -4,7 +4,7 @@ const { createUser, loginUser } = require('./controller');
 
 //USERS ROUTES
 const router = express.Router();
-router.post('/crear', (req, res) => {
+router.post('/create', (req, res) => {
 	const reqUser = req.body;
 	reqUser.isAdmin = false;
 	createUser(reqUser)
@@ -15,7 +15,7 @@ router.post('/crear', (req, res) => {
 			res.status(error.status).json({ message: error.message });
 		});
 });
-router.post('/login', (req, res) => {
+router.post('/access', (req, res) => {
 	const { password, email } = req.body;
 	loginUser(password, email)
 		.then((jwt) => {

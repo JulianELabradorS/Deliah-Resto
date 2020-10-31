@@ -12,7 +12,7 @@ router.get('/getall', auntentication, (req, res) => {
 	productModel
 		.findAll()
 		.then((products) => {
-			res.status(200).json(products);
+			res.status(200).json({ products: products });
 		})
 		.catch((error) => {
 			req.status(500);

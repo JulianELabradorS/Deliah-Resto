@@ -7,6 +7,7 @@ const sequelize = new Sequelize(config.dbName, config.dbUser, config.dbPass, {
 	dialect: 'mysql',
 	define: {
 		freezeTableName: true,
+		raw: true,
 	},
 	query: {
 		raw: true,

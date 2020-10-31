@@ -15,9 +15,14 @@ app.use(helmet());
 app.use(express.json());
 
 //Routes Implementation
-app.use('/usuarios', userRoutes);
-app.use('/productos', productsRoutes);
-app.use('/pedidos', ordersRoutes);
+app.use('/user', userRoutes);
+app.use('/product', productsRoutes);
+app.use('/order', ordersRoutes);
+
+app.use(function (err, req, res, next) {
+	console.error(err.stack);
+	res.status(500).send('Something broke!');
+});
 
 //SERVER PORT
 app.listen(config.port, () => {

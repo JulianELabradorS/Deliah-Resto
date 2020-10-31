@@ -1,0 +1,679 @@
+openapi: 3.0.1
+info:
+  title: Delilah Restó
+  description: >-
+    Backend para un sistema de pedidos online para el restaurante Delilah Resto 
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    email: lockdownlab@gmail.com
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:3000/'
+tags:
+  - name: Usuarios
+    description: Cracion de nuevos usuarios y login de los mismos
+  - name: Productos
+    description: Everything about your Pets
+  - name: Pedidos
+    description: Everything about your Pets
+paths:
+  /user/create:
+    post:
+      tags:
+        - Usuarios
+      summary: Registro de usuarios
+      operationId: addUser
+      requestBody:
+        description: Datos del usuario a registrar
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Devuelve usuario creado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    format: VarChar (50)
+                  telephone:
+                    type: string
+                    format: VarChar (255)
+                  address:
+                    type: string
+                    format: VarChar (255)
+                  email:
+                    type: string
+                    format: VarChar (255)
+                  isAdmin:
+                    type: boolean
+                    format: boolean
+        '400':
+          description: Este email ya esta registrado o faltan campos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: 'Tenemos un problema interno, Intento de nuevo mas tarde'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /login:
+    post:
+      tags:
+        - Usuarios
+      summary: Logind de usuarios.
+      operationId: loginUser
+      requestBody:
+        description: Ingresar el email y constraseña de el usuario.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login_User'
+        required: true
+      responses:
+        '200':
+          description: Nos devuelve un Token(JWT).
+          content:
+            application/json:
+              schema:
+                example: >-
+                  yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiSnVuaW9yIiwibGFzdG5hbWUiOiJNZWRpbmEiLCJwaG9uZSI6IjMxNzI5MjIyNzUiLCJhZGRyZXNzIjoiY2wgMSAjIDIgLSAzMCIsImVtWlsIjoianVuaW9yQGdtYWlsLmNvbSIsInBhc3MiOiIxMjM0Iiwicm9sIjoiYWRtaW4iLCJpYXQiOjE2MDQwMjkzNzJ9.Xcpmu_WqlUsr1DXQHt0y0fynDkj7wjTFzpjo78GiDS8asda
+        '400':
+          description: No se enviaron los campos requeridos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Usuario o contraseña invalidos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /product/create:
+    post:
+      tags:
+        - Productos
+      summary: Crear un nuevo producto
+      operationId: createProduct
+      requestBody:
+        description: Ingrese los datos para crear el producto
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      responses:
+        '200':
+          description: Nos da como resultado los datos del producto creado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  type:
+                    type: string
+                  price:
+                    type: string
+                  image:
+                    type: string
+        '401':
+          description: Usuario No autenticado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '403':
+          description: Debes tener permisos de administrador para realizar esta petición
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '406':
+          description: Por favor llene todos los campos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: 'Poseemos problemas, por favor intenta mas tarde'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      security:
+        - bearerAuth: []
+  /product/getall:
+    get:
+      tags:
+        - Productos
+      summary: Devuelve todos los productos.
+      operationId: FindPoducts
+      responses:
+        '200':
+          description: Responde array de productos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        type:
+                          type: string
+                        price:
+                          type: string
+                        image:
+                          type: string
+  '/product/update/{productId}':
+    patch:
+      tags:
+        - Productos
+      summary: Actualizar producto por id.
+      operationId: updateProduct
+      parameters:
+        - name: productId
+          in: path
+          description: id de el producto a actualizar.
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Actualizar producto.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Update_Product'
+        required: true
+      responses:
+        '200':
+          description: >-
+            La respuesta es la confirmacion de que el producto ha sido
+            actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Usuario no autenticado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '403':
+          description: usuario no autorizado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: 'Datos no encontrados, no se Pudo actualizar el producto.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      security:
+        - bearerAuth: []
+  '/poduct/delete/{productId}':
+    delete:
+      tags:
+        - Productos
+      summary: Eliminar un producto por id
+      operationId: deleteProduct
+      parameters:
+        - name: productId
+          in: path
+          description: Id del producto a eliminar
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Producto eliminado satisfactoriamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Usuario no autenticado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '403':
+          description: Usuario no autorizado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Producto no existe.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: 'Poseemos problemas, por favor intenta mas tarde'
+      security:
+        - bearerAuth: []
+  /order/create:
+    post:
+      tags:
+        - Pedidos
+      summary: Crear un pedido.
+      operationId: getOrderById
+      requestBody:
+        description: Datos para la creacion de el pedido.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+        required: true
+      responses:
+        '200':
+          description: Orden creada.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  userId:
+                    type: string
+                  pay_method:
+                    type: string
+                  request_date:
+                    type: string
+                    format: date-time
+        '400':
+          description: Campos enviados no validos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Usuario no autenticado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Usuario no existe o producto no existe.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      security:
+        - bearerAuth: []
+  '/order/get/{orderId}':
+    get:
+      tags:
+        - Pedidos
+      summary: Obtener Orden por id.
+      operationId: FindRequestById
+      parameters:
+        - name: orderId
+          in: path
+          description: id de la orden a obtener.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '400':
+          description: Datos enviados no validos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Usuario no autenticado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '403':
+          description: Usuario no autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: No existe la orden solicitada.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      security:
+        - bearerAuth: []
+  '/oder/update/{orderId}':
+    patch:
+      tags:
+        - Pedidos
+      summary: Actualizar el estado de un pedido
+      operationId: updateOrder
+      parameters:
+        - name: orderId
+          in: path
+          description: Id del pedido a actualizar
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Estado de la orden Actualizado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Campos no validos o producto no actualizado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Usuario no autenticado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '403':
+          description: Usuario no autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      security:
+        - bearerAuth: []
+  '/order/detele/{orderId}':
+    delete:
+      tags:
+        - Pedidos
+      summary: Eliminar pedido por id.
+      operationId: deleteRequest
+      parameters:
+        - name: orderId
+          in: path
+          description: Id de la orden a eliminar
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Pedido eliminado satisfactoriamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: id no enviado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Usuario no Autenticado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '403':
+          description: Usuario no autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Orden no encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      security:
+        - bearerAuth: []
+  /all:
+    get:
+      tags:
+        - Pedidos
+      summary: Obtener todas las ordenes.
+      responses:
+        '200':
+          description: Responde array de ordenes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        user_id:
+                          type: integer
+                        request_date:
+                          type: string
+                          format: date-time
+                        state:
+                          type: string
+                        pay_method:
+                          type: string
+        '401':
+          description: Usuario no Autenticado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '403':
+          description: Usuario no autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+          format: VarChar (50)
+        telephone:
+          type: string
+          format: VarChar (255)
+        address:
+          type: string
+          format: VarChar (255)
+        email:
+          type: string
+          format: VarChar (255)
+        password:
+          type: string
+          format: VarChar (255)
+        isAdmin:
+          type: boolean
+          format: boolean
+    Login_User:
+      type: object
+      properties:
+        email:
+          type: string
+          format: VarChar (255)
+        password:
+          type: string
+          format: VarChar (255)
+    Order:
+      type: object
+      properties:
+        pay_method:
+          type: string
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              productId:
+                type: integer
+              quantity:
+                type: integer
+        userId:
+          type: integer
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        price:
+          type: string
+        image:
+          type: string
+    Update_Product:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        price:
+          type: string
+        image:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
