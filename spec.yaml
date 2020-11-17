@@ -71,7 +71,7 @@ paths:
                 properties:
                   message:
                     type: string
-  /login:
+  /user/login:
     post:
       tags:
         - Usuarios
@@ -438,7 +438,7 @@ paths:
                     type: string
       security:
         - bearerAuth: []
-  '/oder/update/{orderId}':
+  '/order/update/{orderId}':
     patch:
       tags:
         - Pedidos
@@ -551,7 +551,7 @@ paths:
                     type: string
       security:
         - bearerAuth: []
-  /all:
+  /order/getall:
     get:
       tags:
         - Pedidos

@@ -1,14 +1,38 @@
 const express = require('express');
 const requestModel = require('../../database/request/models/requestModel');
+const productModel = require('../../database/product/models/productModel');
+const userModel = require('../../database/user/models/userModel');
 //CONTROLLER
 const { findById, createRequest, updateStateById, deleteById } = require('./controller');
 //MIDDLEWARES
 const autorization = require('../../middlewares/autorization');
 const autentication = require('../../middlewares/autentication');
-const { response } = require('express');
 
 // ORDER ROUTES
 const router = express.Router();
+router.get('/getall', autentication, autorization, (req, res) => {
+	requestModel
+		.findAll({
+			include: [
+				{
+					model: productModel,
+					attributes: { exclude: ['id', 'orders'] },
+				},
+				userModel,
+			],
+			raw: true,
+			nest: true,
+			attributes: {
+				exclude: ['userId'],
+			},
+		})
+		.then((orders) => {
+			res.status(200).json({ orders: orders });
+		})
+		.catch((error) => {
+			req.status(500);
+		});
+});
 
 //Create order
 router.post('/create', autentication, (req, res) => {

@@ -62,6 +62,8 @@ npm run start
 
 ```
 
+6. Opcionalmente en el arcivo Proyecto3.postman_collection.json se añade la coleccion para probar lo endpoints.
+
 ## Autores
 
 * **Julian Eduardo Labrador Sanchez** - *Trabajo Inicial\* - [JulianELabradorS](https://github.com/JulianELabradorS)

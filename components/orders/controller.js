@@ -109,7 +109,7 @@ const deleteById = (id) => {
 			requestModel
 				.destroy({ where: { id: id } })
 				.then((response) => {
-					if (response[0] === 1) {
+					if (response === 1) {
 						res('Orden eliminada');
 					} else {
 						rejc({ status: 404, message: `No se encontro la orden con id ${id}` });

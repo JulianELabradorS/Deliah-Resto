@@ -15,7 +15,7 @@ router.post('/create', (req, res) => {
 			res.status(error.status).json({ message: error.message });
 		});
 });
-router.post('/access', (req, res) => {
+router.post('/login', (req, res) => {
 	const { password, email } = req.body;
 	loginUser(password, email)
 		.then((jwt) => {
